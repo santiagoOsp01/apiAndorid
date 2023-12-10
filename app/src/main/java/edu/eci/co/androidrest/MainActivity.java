@@ -25,25 +25,16 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-
-        //imageView = findViewById(R.id.image_dog);
-        //breedText = findViewById(R.id.text_breed);
         imageView = binding.imageDog;
         breedText = binding.textBreed;
-
-        //Button randomButton = findViewById(R.id.button_random);
-        //Button randomButton = binding.buttonRandom;
-
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://dog.ceo/api/")
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
 
         service = retrofit.create(DogApiService.class);
-
         binding.buttonRandom.setOnClickListener(v -> fetchRandomDogImage());
     }
 
@@ -56,16 +47,11 @@ public class MainActivity extends AppCompatActivity {
             public void onResponse(Call<DogResponse> call, Response<DogResponse> response) {
                 Log.d("MainActivity", "Init On Response");
                 if (response.isSuccessful()) {
-                    // DogResponse dogResponse = response.body();
-                    // Aquí puedes extraer y mostrar la imagen y la raza
                     String imageUrl = response.body().getMessage();
                     Glide.with(imageView.getContext())
                             .load(imageUrl)
                             .error(R.drawable.not_found)
                             .into(imageView);
-
-                    // Opcional: Extraer y mostrar la raza del perro de la URL
-                    // String breed = extraerRazaDeLaURL(imageUrl);
                     String breed = imageUrl.split("/")[4];
                     breedText.setText(breed);
                 } else {
@@ -75,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onFailure(Call<DogResponse> call, Throwable t) {
-                // Manejo de error
                 call.cancel();
             }
 
